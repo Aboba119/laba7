@@ -1,0 +1,105 @@
+'''Требуется для своего варианта второй части л.р. №6 (усложненной программы)
+разработать реализацию с использованием графического интерфейса. 
+Допускается использовать любую графическую библиотеку питона.
+Рекомендуется использовать внутреннюю библиотеку питона  tkinter.
+В программе должны быть реализованы минимум одно окно ввода, одно окно вывода (со скролингом)
+одно текстовое поле, одна кнопка.'''
+
+import tkinter as tk
+from tkinter import scrolledtext
+from itertools import permutations
+
+
+def generate_permutations(elements, length):
+    if length == 0:
+        return [[]]
+    permutations_list = []
+    for i in range(len(elements)):
+        current = elements[i]
+        remaining = elements[:i] + elements[i + 1:]
+        for p in generate_permutations(remaining, length - 1):
+            permutations_list.append([current] + p)
+    return permutations_list
+
+
+def target_func(candidate):
+    return candidate[0] + candidate[-1]
+
+
+def process_numbers():
+    # Очищаем вывод
+    output_text.delete(1.0, tk.END)
+
+    try:
+        # Получаем введенные числа
+        numbers = list(map(int, entry.get().split()))
+
+        # Ограничение: числа, делящиеся на 3
+        divisible_numbers = [num for num in numbers if num % 3 == 0]
+        required_length = len(divisible_numbers)
+
+        if required_length == 0:
+            output_text.insert(tk.END, "Нет чисел, делящихся на 3.\n")
+            return
+
+        # Генерация всех возможных кортежей длины required_length
+        lib_tuples = list(permutations(divisible_numbers, required_length))
+        output_text.insert(tk.END, "Библиотека:\n\n")
+        for t in lib_tuples:
+            output_text.insert(tk.END, f"{t}\n")
+
+        # Нахождение оптимального кортежа
+        if lib_tuples:
+            optimal_tuple = max(lib_tuples, key=target_func)
+            sum_first_last = optimal_tuple[0] + optimal_tuple[-1]
+            output_text.insert(tk.END,
+                               f"\nОптимальный кортеж: {optimal_tuple}, сумма первого и последнего элемента = {sum_first_last}\n")
+        else:
+            output_text.insert(tk.END, "Не удалось сформировать кортежи.\n")
+
+        # Генерация перестановок собственным алгоритмом
+        alg_tuples = generate_permutations(divisible_numbers, required_length)
+        output_text.insert(tk.END, "\nАлгоритм:\n\n")
+        for t in alg_tuples:
+            output_text.insert(tk.END, f"{tuple(t)}\n")
+
+        # Поиск оптимального кортежа
+        if alg_tuples:
+            optimal_tuple = max(alg_tuples, key=target_func)
+            sum_first_last = optimal_tuple[0] + optimal_tuple[-1]
+            output_text.insert(tk.END,
+                               f"\nОптимальный кортеж: {tuple(optimal_tuple)}, сумма первого и последнего элемента = {sum_first_last}\n")
+        else:
+            output_text.insert(tk.END, "Не удалось сформировать кортежи.\n")
+
+    except ValueError:
+        output_text.insert(tk.END, "Ошибка: введите только числа, разделенные пробелами!\n")
+
+
+# Создаем главное окно
+root = tk.Tk()
+root.title("Анализ перестановок чисел")
+root.geometry("800x600")
+
+# Создаем рамку для ввода
+input_frame = tk.Frame(root)
+input_frame.pack(pady=10)
+
+# Метка для поля ввода
+label = tk.Label(input_frame, text="Введите числа через пробел:")
+label.pack(side=tk.LEFT)
+
+# Поле ввода
+entry = tk.Entry(input_frame, width=50)
+entry.pack(side=tk.LEFT, padx=10)
+
+# Кнопка обработки
+process_button = tk.Button(root, text="Обработать", command=process_numbers)
+process_button.pack(pady=5)
+
+# Поле вывода с прокруткой
+output_text = scrolledtext.ScrolledText(root, width=100, height=30, wrap=tk.WORD)
+output_text.pack(padx=10, pady=10)
+
+# Запускаем главный цикл
+root.mainloop()
