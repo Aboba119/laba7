@@ -1,12 +1,12 @@
 '''Требуется для своего варианта второй части л.р. №6 (усложненной программы)
-разработать реализацию с использованием графического интерфейса. 
+разработать реализацию с использованием графического интерфейса.
 Допускается использовать любую графическую библиотеку питона.
 Рекомендуется использовать внутреннюю библиотеку питона  tkinter.
 В программе должны быть реализованы минимум одно окно ввода, одно окно вывода (со скролингом)
 одно текстовое поле, одна кнопка.'''
 
 import tkinter as tk
-from tkinter import scrolledtext
+from tkinter import scrolledtext  # окно с прокруткой
 from itertools import permutations
 
 
@@ -82,20 +82,20 @@ root.title("Анализ перестановок чисел")
 root.geometry("800x600")
 
 # Создаем рамку для ввода
-input_frame = tk.Frame(root)
-input_frame.pack(pady=10)
+input_frame = tk.Frame(root)  # контейнер элементов
+input_frame.pack(pady=10)  # отступ в пикселях
 
 # Метка для поля ввода
 label = tk.Label(input_frame, text="Введите числа через пробел:")
 label.pack(side=tk.LEFT)
 
 # Поле ввода
-entry = tk.Entry(input_frame, width=50)
-entry.pack(side=tk.LEFT, padx=10)
+entry = tk.Entry(input_frame, width=50)  # поле ввода(ширина 50 символов)
+entry.pack(side=tk.LEFT, padx=10)  # размещение поля ввода
 
 # Кнопка обработки
 process_button = tk.Button(root, text="Обработать", command=process_numbers)
-process_button.pack(pady=5)
+process_button.pack(pady=5)  # размещение кнопки
 
 # Поле вывода с прокруткой
 output_text = scrolledtext.ScrolledText(root, width=100, height=30, wrap=tk.WORD)
